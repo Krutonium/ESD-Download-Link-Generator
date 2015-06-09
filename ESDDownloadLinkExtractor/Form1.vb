@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Net.Http
 
 Public Class Form1
 
@@ -24,18 +25,43 @@ Public Class Form1
     End Sub
     Public Property CorD As String
     Public Property ESDName As String
-    Public Property SHA1 As String
-    Public Property Datee As String
+    Public Property SHA1 As String = 0
+    Public Property Datee As String = 0
 
     Private Sub SlowRingDL()
-        FormLanguage.ShowDialog()
         ESDName = InputBox("Filename of the ESD you want.", "ESD File Name")
-        SHA1 = InputBox("SHA1 of the ESD you want.", "SHA1 of the ESD File")
-        Datee = InputBox("Date of the Build you want 'year/month' like 2015/09", "Date that it was built")
+        Do Until SHA1.Count = 40
+            SHA1 = InputBox("SHA1 of the ESD you want.", "SHA1 of the ESD File")
+        Loop
+        Do Until Datee.Count = 7
+            Datee = InputBox("Date of the Build you want 'year/month' like 2015/09", "Date that it was built")
+        Loop
+        CorD = "/c/updt"
         Dim DLLink As String = "http://b1.download.windowsupdate.com" & CorD & "/" & Datee & "/" & ESDName & "_" & SHA1 & ".esd"
-        txtLink.Text = DLLink
-        txtLink.Enabled = True
+        If RemoteFileOk(DLLink) = False Then
+            CorD = "/d/updt"
+            DLLink = "http://b1.download.windowsupdate.com" & CorD & "/" & Datee & "/" & ESDName & "_" & SHA1 & ".esd"
+            If RemoteFileOk(DLLink) = False Then
+                MsgBox("Some of the info you entered appears to be wrong. Please try again!")
+            Else
+                txtLink.Text = DLLink
+                txtLink.Enabled = True
+            End If
+        Else
+            txtLink.Text = DLLink
+            txtLink.Enabled = True
+        End If
     End Sub
+
+    Private Function RemoteFileOk(ByVal Url As String) As Boolean
+        Using client As New HttpClient,
+            responseTask As Task(Of HttpResponseMessage) = client.GetAsync(Url, HttpCompletionOption.ResponseHeadersRead)
+            responseTask.Wait()
+            Using response As HttpResponseMessage = responseTask.Result
+                Return response.IsSuccessStatusCode
+            End Using
+        End Using
+    End Function
     Private Sub FastRingDL()
         Dim ProcGo As New ProcessStartInfo
         ProcGo.Arguments = "–ExecutionPolicy Bypass Get-BitsTransfer -AllUsers | Select -ExpandProperty FileList | Select -ExpandProperty RemoteName"

@@ -53,6 +53,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -86,12 +87,6 @@
       <DependentUpon>Form1.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLanguage.Designer.vb">
-      <DependentUpon>FormLanguage.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FormLanguage.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -114,9 +109,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormLanguage.resx">
-      <DependentUpon>FormLanguage.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
