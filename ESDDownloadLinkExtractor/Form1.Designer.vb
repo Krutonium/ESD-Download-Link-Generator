@@ -37,6 +37,7 @@ Partial Class Form1
         Me.lblNameAndSpeed = New System.Windows.Forms.Label()
         Me.ProgressBar1 = New System.Windows.Forms.ProgressBar()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
+        Me.cmdESDDB = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'cmdDownload
@@ -157,11 +158,21 @@ Partial Class Form1
         Me.ProgressBar1.Size = New System.Drawing.Size(352, 23)
         Me.ProgressBar1.TabIndex = 18
         '
+        'cmdESDDB
+        '
+        Me.cmdESDDB.Location = New System.Drawing.Point(160, 93)
+        Me.cmdESDDB.Name = "cmdESDDB"
+        Me.cmdESDDB.Size = New System.Drawing.Size(162, 23)
+        Me.cmdESDDB.TabIndex = 19
+        Me.cmdESDDB.Text = "ESD Database"
+        Me.cmdESDDB.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(520, 220)
+        Me.Controls.Add(Me.cmdESDDB)
         Me.Controls.Add(Me.ProgressBar1)
         Me.Controls.Add(Me.lblNameAndSpeed)
         Me.Controls.Add(Me.btnDownloadBuild)
@@ -198,5 +209,6 @@ Partial Class Form1
     Friend WithEvents lblNameAndSpeed As System.Windows.Forms.Label
     Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
     Friend WithEvents SaveFileDialog1 As System.Windows.Forms.SaveFileDialog
+    Friend WithEvents cmdESDDB As System.Windows.Forms.Button
 
 End Class

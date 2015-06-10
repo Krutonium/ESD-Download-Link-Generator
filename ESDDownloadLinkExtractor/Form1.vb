@@ -159,4 +159,8 @@ Public Class Form1
         SW.Stop()
         SW.Reset()
     End Sub
+
+    Private Sub cmdESDDB_Click(sender As Object, e As EventArgs) Handles cmdESDDB.Click
+        Process.Start("www.ms-vnext.net/Win10esds/")
+    End Sub
 End Class
