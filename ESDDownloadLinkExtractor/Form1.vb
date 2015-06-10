@@ -13,6 +13,7 @@ Public Class Form1
         'tbSHA1.Text = "51d2530e174a927be27c77ef96266e760811889c"
         SaveFileDialog1.Filter = "ESD File|*.ESD"
         SaveFileDialog1.Title = "Save an ESD File"
+        lblNameAndSpeed.Text = ""
     End Sub
 
     Private Sub cmdDownload_Click(sender As Object, e As EventArgs) Handles cmdDownload.Click
