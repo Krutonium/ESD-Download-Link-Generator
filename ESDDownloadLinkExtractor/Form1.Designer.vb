@@ -133,6 +133,7 @@ Partial Class Form1
         '
         'btnDownloadBuild
         '
+        Me.btnDownloadBuild.Enabled = False
         Me.btnDownloadBuild.Location = New System.Drawing.Point(288, 160)
         Me.btnDownloadBuild.Name = "btnDownloadBuild"
         Me.btnDownloadBuild.Size = New System.Drawing.Size(168, 23)
@@ -143,7 +144,7 @@ Partial Class Form1
         'lblNameAndSpeed
         '
         Me.lblNameAndSpeed.AutoSize = True
-        Me.lblNameAndSpeed.Location = New System.Drawing.Point(12, 222)
+        Me.lblNameAndSpeed.Location = New System.Drawing.Point(12, 264)
         Me.lblNameAndSpeed.Name = "lblNameAndSpeed"
         Me.lblNameAndSpeed.Size = New System.Drawing.Size(39, 13)
         Me.lblNameAndSpeed.TabIndex = 17
@@ -160,7 +161,7 @@ Partial Class Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(520, 322)
+        Me.ClientSize = New System.Drawing.Size(520, 220)
         Me.Controls.Add(Me.ProgressBar1)
         Me.Controls.Add(Me.lblNameAndSpeed)
         Me.Controls.Add(Me.btnDownloadBuild)
@@ -176,6 +177,7 @@ Partial Class Form1
         Me.Controls.Add(Me.txtLink)
         Me.Controls.Add(Me.cmdDownload)
         Me.Name = "Form1"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Form1"
         Me.ResumeLayout(False)
         Me.PerformLayout()

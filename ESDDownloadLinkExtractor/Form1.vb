@@ -3,18 +3,23 @@ Imports System.Net.Http
 Imports System.Net
 
 Public Class Form1
-    Dim WithEvents WS As New WebClient
+    Dim WS As New WebClient
     Dim Filename As String
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = "ESD Download Link Extractor"
         txtLink.Enabled = False
+        'tbName.Text = "10041.0.150313-1821.fbl_impressive_cliententerprise_vol_x64fre_en-us"
+        'tbDate.Text = "2015/03"
+        'tbSHA1.Text = "51d2530e174a927be27c77ef96266e760811889c"
+        SaveFileDialog1.Filter = "ESD File|*.ESD"
+        SaveFileDialog1.Title = "Save an ESD File"
     End Sub
 
     Private Sub cmdDownload_Click(sender As Object, e As EventArgs) Handles cmdDownload.Click
-        Dim result = MsgBox("Open ESD Database?", MsgBoxStyle.YesNo, "Build List")
-        If result = MsgBoxResult.Yes Then
-            Process.Start("www.ms-vnext.net/Win10esds/")
-        End If
+        'Dim result = MsgBox("Open ESD Database?", MsgBoxStyle.YesNo, "Build List")
+        'If result = MsgBoxResult.Yes Then
+        'Process.Start("www.ms-vnext.net/Win10esds/")
+        'End If
         Call InfoBasedDL()
     End Sub
     Public Property CorD As String
@@ -54,10 +59,12 @@ Public Class Form1
             Else
                 txtLink.Text = DLLink
                 txtLink.Enabled = True
+                btnDownloadBuild.Enabled = True
             End If
         Else
             txtLink.Text = DLLink
             txtLink.Enabled = True
+            btnDownloadBuild.Enabled = True
         End If
     End Sub
 
@@ -92,6 +99,7 @@ Public Class Form1
             MsgBox("Sorry, failed to retrieve the link - is it currently downloading? It should be.")
         Else
             MsgBox("Please note that this download link is time sensitive.")
+            btnDownloadBuild.Enabled = True
         End If
     End Sub
 
@@ -121,12 +129,33 @@ Public Class Form1
     Public Sub DownloadFile(ByVal URL As String)
         Filename = Path.GetFileName(URL)
         SaveFileDialog1.ShowDialog()
+        AddHandler WS.DownloadProgressChanged, AddressOf WS_DownloadProgressChanged
+        AddHandler WS.DownloadFileCompleted, AddressOf WS_DownloadFinished
+        SW.Start()
         WS.DownloadFileAsync(New Uri(URL), SaveFileDialog1.FileName)
-        MsgBox("Downloading!")
+        Me.Size = New Size(Me.Size.Width, Me.Size.Height + 100)
+        'MsgBox("Downloading!")
     End Sub
-    Private Sub WS_DownloadProgressChanged(ByVal sender As Object, ByVal e As DownloadProgressChangedEventArgs) Handles WS.DownloadProgressChanged
+    Dim SW As New Stopwatch
+    Private Sub WS_DownloadProgressChanged(ByVal sender As Object, ByVal e As DownloadProgressChangedEventArgs)
         ProgressBar1.Value = e.ProgressPercentage
-        Dim NandS As String = FileName & vbNewLine & (e.BytesReceived / (DirectCast(e.UserState, Stopwatch).ElapsedMilliseconds / 1000.0#)).ToString("#")
+        Dim RawSpeedInKBs As String = (e.BytesReceived / SW.ElapsedMilliseconds).ToString
+        Dim RawSpeedNoDecimals() As String = RawSpeedInKBs.Split(".")
+        Dim newSpeed As String
+        If RawSpeedNoDecimals(0) > 1000 Then
+            Dim RawMBS As String
+            RawMBS = RawSpeedNoDecimals(0) / 1024
+            newSpeed = RawMBS.Split(".")(0) & "MB/s"
+        Else
+            newSpeed = RawSpeedNoDecimals(0) & "KB/s"
+        End If
+        Dim NandS As String = "Download speed = " & newSpeed & vbNewLine & "File name: " & Filename & vbNewLine & "Saving to: " & SaveFileDialog1.FileName
+        ProgressBar1.Value = e.ProgressPercentage
         lblNameAndSpeed.Text = NandS
+    End Sub
+    Private Sub WS_DownloadFinished(ByVal sender As Object, ByVal e As DownloadDataCompletedEventArgs)
+        MsgBox("Download Completed!")
+        SW.Stop()
+        SW.Reset()
     End Sub
 End Class
