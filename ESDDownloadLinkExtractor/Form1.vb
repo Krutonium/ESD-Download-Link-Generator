@@ -1,41 +1,49 @@
 ﻿Imports System.IO
 Imports System.Net.Http
+Imports System.Net
 
 Public Class Form1
-
+    Dim WithEvents WS As New WebClient
+    Dim Filename As String
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = "ESD Download Link Extractor"
         txtLink.Enabled = False
-        rdoFast.Checked = True
-        rdoSlow.Checked = False
     End Sub
 
     Private Sub cmdDownload_Click(sender As Object, e As EventArgs) Handles cmdDownload.Click
-        If rdoFast.Checked = True Then
-            Call FastRingDL()
-        ElseIf rdoSlow.Checked = True Then
-            Dim result = MsgBox("Open ESD Database?", MsgBoxStyle.YesNo, "Build List")
-            If result = MsgBoxResult.Yes Then
-                Process.Start("www.ms-vnext.net/Win10esds/")
-            End If
-            Call SlowRingDL()
-        Else
-            MsgBox("Wat.")
+        Dim result = MsgBox("Open ESD Database?", MsgBoxStyle.YesNo, "Build List")
+        If result = MsgBoxResult.Yes Then
+            Process.Start("www.ms-vnext.net/Win10esds/")
         End If
+        Call InfoBasedDL()
     End Sub
     Public Property CorD As String
     Public Property ESDName As String
     Public Property SHA1 As String = 0
     Public Property Datee As String = 0
 
-    Private Sub SlowRingDL()
-        ESDName = InputBox("Filename of the ESD you want.", "ESD File Name")
-        Do Until SHA1.Count = 40
-            SHA1 = InputBox("SHA1 of the ESD you want.", "SHA1 of the ESD File")
-        Loop
-        Do Until Datee.Count = 7
-            Datee = InputBox("Date of the Build you want 'year/month' like 2015/09", "Date that it was built")
-        Loop
+    Private Sub InfoBasedDL()
+        tbSHA1.Text = tbSHA1.Text.Trim
+        tbName.Text = tbName.Text.Trim
+        If tbName.TextLength = 0 Then
+            MsgBox("Please insert the name of the ESD!")
+            Exit Sub
+        Else
+            ESDName = tbName.Text
+        End If
+        If tbSHA1.TextLength = 40 = False Then
+            MsgBox("SHA1 is not correct. It is either too long or too short.")
+            Exit Sub
+        Else
+            SHA1 = tbSHA1.Text
+        End If
+        If tbDate.TextLength = 7 = False Then
+            MsgBox("Bad Date!")
+            Exit Sub
+        Else
+            Datee = tbDate.Text
+        End If
+
         CorD = "/c/updt"
         Dim DLLink As String = "http://b1.download.windowsupdate.com" & CorD & "/" & Datee & "/" & ESDName & "_" & SHA1 & ".esd"
         If RemoteFileOk(DLLink) = False Then
@@ -62,7 +70,7 @@ Public Class Form1
             End Using
         End Using
     End Function
-    Private Sub FastRingDL()
+    Private Sub CurrentlyDownloading()
         Dim ProcGo As New ProcessStartInfo
         ProcGo.Arguments = "–ExecutionPolicy Bypass Get-BitsTransfer -AllUsers | Select -ExpandProperty FileList | Select -ExpandProperty RemoteName"
         ProcGo.RedirectStandardOutput = True
@@ -87,10 +95,10 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub rdoSlow_CheckedChanged(sender As Object, e As EventArgs) Handles rdoSlow.CheckedChanged
-        If rdoSlow.Checked = True Then
-            MsgBox("Please keep in mind that this will only work for files that Microsoft has actually released!")
-        End If
+    Private Sub rdoSlow_CheckedChanged(sender As Object, e As EventArgs)
+        'If rdoSlow.Checked = True Then
+        '    MsgBox("Please keep in mind that this will only work for files that Microsoft has actually released!")
+        'End If
     End Sub
 
     Private Sub cmdCpyToClp_Click(sender As Object, e As EventArgs) Handles cmdCpyToClp.Click
@@ -100,5 +108,25 @@ Public Class Form1
 
     Private Sub cmdAbout_Click(sender As Object, e As EventArgs) Handles cmdAbout.Click
         AboutBox1.ShowDialog()
+    End Sub
+
+    Private Sub cmdCurrent_Click(sender As Object, e As EventArgs) Handles cmdCurrent.Click
+        Call CurrentlyDownloading()
+    End Sub
+
+    Private Sub btnDownloadBuild_Click(sender As Object, e As EventArgs) Handles btnDownloadBuild.Click
+        DownloadFile(txtLink.Text)
+    End Sub
+
+    Public Sub DownloadFile(ByVal URL As String)
+        Filename = Path.GetFileName(URL)
+        SaveFileDialog1.ShowDialog()
+        WS.DownloadFileAsync(New Uri(URL), SaveFileDialog1.FileName)
+        MsgBox("Downloading!")
+    End Sub
+    Private Sub WS_DownloadProgressChanged(ByVal sender As Object, ByVal e As DownloadProgressChangedEventArgs) Handles WS.DownloadProgressChanged
+        ProgressBar1.Value = e.ProgressPercentage
+        Dim NandS As String = FileName & vbNewLine & (e.BytesReceived / (DirectCast(e.UserState, Stopwatch).ElapsedMilliseconds / 1000.0#)).ToString("#")
+        lblNameAndSpeed.Text = NandS
     End Sub
 End Class
