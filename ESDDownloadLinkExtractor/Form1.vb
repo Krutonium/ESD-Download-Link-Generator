@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Net.Http
 Imports System.Net
+Imports System.Text.RegularExpressions
 
 Public Class Form1
     Dim WS As New WebClient
@@ -88,11 +89,12 @@ Public Class Form1
         Dim ProcOut As Process = Process.Start(ProcGo)
         ProcOut.WaitForExit()
         Dim OutPut As String = ProcOut.StandardOutput.ReadToEnd
-        Dim Split As List(Of String) = OutPut.Split("http").ToList
+        Dim delimiter As String = "http"
+        Dim Split As Array = Regex.Split(OutPut, delimiter)
         For Each item In Split
-            If item.ToUpper.Contains(".ESD") Then
+            If item.ToString.ToUpper.Contains("ESD") Then
                 txtLink.Enabled = True
-                txtLink.Text = "h" & item
+                txtLink.Text = delimiter & item
                 Exit For
             End If
         Next
